@@ -7,6 +7,9 @@ except:
 
 import maya.OpenMayaUI as omui
 import os
+import importlib
+from . import objectCreatorUtil as objut
+importlib.reload(objut)
 
 ICON_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'icons'))
 
@@ -43,7 +46,7 @@ class ObjectCreatorDialog(QtWidgets.QDialog):
 					font-family: Oswald;
 				}
 			'''
-		)
+		)	
 
 		self.name_layout.addWidget(self.name_label)
 		self.name_layout.addWidget(self.name_lineEdit)
@@ -51,6 +54,7 @@ class ObjectCreatorDialog(QtWidgets.QDialog):
 		self.button_layout = QtWidgets.QHBoxLayout()
 		self.main_layout.addLayout(self.button_layout)
 		self.create_button = QtWidgets.QPushButton('😊 Create')
+		self.create_button.clicked.connect(self.onClickCreatePrimitive)
 		self.create_button.setStyleSheet(
 			'''
 				QPushButton {
@@ -60,6 +64,7 @@ class ObjectCreatorDialog(QtWidgets.QDialog):
 		)
 
 		self.cancel_button = QtWidgets.QPushButton('❌ Cancel')
+		self.cancel_button.clicked.connect(self.close)
 		self.button_layout.addStretch()
 		self.button_layout.addWidget(self.create_button)
 		self.button_layout.addWidget(self.cancel_button)
@@ -72,6 +77,10 @@ class ObjectCreatorDialog(QtWidgets.QDialog):
 			item = QtWidgets.QListWidgetItem(obj)
 			item.setIcon(QtGui.QIcon(os.path.join(ICON_PATH, f'{obj}.png')))
 			self.object_listWidget.addItem(item)
+
+	def onClickCreatePrimitive(self):
+		name = self.name_lineEdit.text()
+		objut.createObject(self,name)
 
 def run():
 	global ui
